@@ -1,25 +1,47 @@
-"use client"
+import React from 'react';
+import { cookies, headers } from 'next/headers';
+import { redirect } from 'next/navigation';
 import { AdminLayout } from '@/components/layout/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { FileText, CheckCircle2, Clock, PlusCircle, ArrowUpRight, Search } from 'lucide-react';
-import { getAllCertificates } from '@/app/lib/mock-data';
 import Link from 'next/link';
+import QuickVerify from '@/components/admin/QuickVerify';
 
-export default function DashboardPage() {
-  const certificates = getAllCertificates();
-  
+export default async function DashboardPage() {
+  const token = ((await cookies()) as any).get('certiflow_token')?.value;
+  if (!token) redirect('/admin/login');
+
+  const res = await fetch('https://eunous-certificate-backend.vercel.app/api/certificates/dashboard', {
+    headers: { Authorization: `Bearer ${token}` },
+    cache: 'no-store',
+  });
+
+  if (!res.ok) {
+    // if unauthorized, redirect to login
+    if (res.status === 401) redirect('/admin/login');
+    return (
+      <AdminLayout>
+        <div className="p-4">Unable to load dashboard.</div>
+      </AdminLayout>
+    );
+  }
+
+  const json = await res.json();
+  const data = json.data;
+
+  const certificates = data?.recentCertificates || [];
+
   const stats = [
-    { title: "Total Certificates", value: certificates.length, icon: FileText, color: "text-primary", bg: "bg-primary/10" },
-    { title: "Verified Today", value: "24", icon: CheckCircle2, color: "text-emerald-600", bg: "bg-emerald-50" },
-    { title: "New This Week", value: certificates.length, icon: Clock, color: "text-accent", bg: "bg-accent/10" },
+    { title: 'Total Certificates', value: data?.totalCertificates ?? 0, icon: FileText, color: 'text-primary', bg: 'bg-primary/10' },
+    { title: 'Verified Today', value: data?.certificatesToday ?? 0, icon: CheckCircle2, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+    { title: 'New This Week', value: data?.newThisWeek ?? data?.totalCertificates ?? 0, icon: Clock, color: 'text-accent', bg: 'bg-accent/10' },
   ];
 
   return (
     <AdminLayout>
       <div className="space-y-8">
-        {/* Header Section */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <h1 className="text-3xl font-headline font-bold text-primary">Overview</h1>
@@ -33,7 +55,6 @@ export default function DashboardPage() {
           </Link>
         </div>
 
-        {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {stats.map((stat) => (
             <Card key={stat.title} className="border-none shadow-sm hover:shadow-md transition-shadow">
@@ -50,7 +71,6 @@ export default function DashboardPage() {
           ))}
         </div>
 
-        {/* Main Content Area */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <Card className="lg:col-span-2 border-none shadow-sm">
             <CardHeader className="flex flex-row items-center justify-between">
@@ -77,12 +97,12 @@ export default function DashboardPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {certificates.slice(0, 5).map((cert) => (
+                  {certificates.slice(0, 5).map((cert: any) => (
                     <TableRow key={cert.id} className="group">
-                      <TableCell className="font-semibold text-primary">{cert.studentName}</TableCell>
+                      <TableCell className="font-semibold text-primary">{cert.fullName || cert.studentName}</TableCell>
                       <TableCell className="font-code text-xs text-muted-foreground">{cert.registrationNumber}</TableCell>
                       <TableCell>{cert.internshipDomain}</TableCell>
-                      <TableCell className="text-sm text-muted-foreground">{cert.issueDate}</TableCell>
+                      <TableCell className="text-sm text-muted-foreground">{new Date(cert.createdAt || cert.certificateIssueDate || cert.issueDate).toLocaleDateString()}</TableCell>
                       <TableCell className="text-right">
                         <Link href={`/certificate/${cert.registrationNumber}`}>
                           <Button variant="ghost" size="icon" className="group-hover:text-accent">
@@ -103,18 +123,8 @@ export default function DashboardPage() {
               <CardDescription>Search records instantly.</CardDescription>
             </CardHeader>
             <CardContent className="flex-1 flex flex-col justify-between">
-              <div className="space-y-4">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <input 
-                    type="text" 
-                    placeholder="Enter Registration No." 
-                    className="w-full h-11 pl-10 rounded-lg border-2 border-secondary focus:border-accent outline-none transition-colors"
-                  />
-                </div>
-                <Button className="w-full h-11 bg-accent hover:bg-accent/90">Search Record</Button>
-              </div>
-              
+              <QuickVerify />
+
               <div className="mt-8 p-6 bg-primary rounded-2xl text-white relative overflow-hidden group">
                 <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full group-hover:scale-150 transition-transform duration-500" />
                 <h3 className="font-headline font-bold text-lg mb-2 relative z-10">System Status</h3>

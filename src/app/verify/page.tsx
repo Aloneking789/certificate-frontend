@@ -6,30 +6,60 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Search, ShieldCheck, AlertCircle, CheckCircle2, QrCode, Printer, ExternalLink } from 'lucide-react';
-import { getCertificateByReg, Certificate } from '@/app/lib/mock-data';
 import Link from 'next/link';
+
+type VerifyResult = {
+  registrationNumber: string;
+  studentName: string;
+  internshipDomain?: string;
+  courseName?: string;
+  collegeName?: string;
+  startDate?: string;
+  endDate?: string;
+  totalHours?: number;
+  performance?: string;
+  issueDate?: string;
+  isVerified?: boolean;
+};
 
 export default function VerifyPage() {
   const [regNumber, setRegNumber] = useState('');
-  const [result, setResult] = useState<Certificate | null>(null);
+  const [result, setResult] = useState<VerifyResult | null>(null);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handleVerify = () => {
+  const handleVerify = async () => {
     setLoading(true);
     setError(false);
     setResult(null);
-    
-    // Simulate API delay
-    setTimeout(() => {
-      const cert = getCertificateByReg(regNumber);
-      if (cert) {
-        setResult(cert);
+
+    try {
+      const res = await fetch(`/api/certificates/verify/${encodeURIComponent(regNumber)}`);
+      const data = await res.json();
+      if (res.ok && data?.certificate) {
+        const c = data.certificate;
+        const mapped: VerifyResult = {
+          registrationNumber: c.registrationNumber,
+          studentName: c.fullName,
+          internshipDomain: c.internshipDomain || '',
+          courseName: c.courseName || '',
+          collegeName: c.collegeName || '',
+          startDate: c.startDate ? new Date(c.startDate).toLocaleDateString() : '',
+          endDate: c.endDate ? new Date(c.endDate).toLocaleDateString() : '',
+          totalHours: c.totalHours ?? 0,
+          performance: c.performance || 'Very Good',
+          issueDate: c.certificateIssueDate ? new Date(c.certificateIssueDate).toLocaleDateString() : (c.createdAt ? new Date(c.createdAt).toLocaleDateString() : ''),
+          isVerified: c.isVerified
+        };
+        setResult(mapped);
       } else {
         setError(true);
       }
+    } catch (err) {
+      setError(true);
+    } finally {
       setLoading(false);
-    }, 800);
+    }
   };
 
   return (

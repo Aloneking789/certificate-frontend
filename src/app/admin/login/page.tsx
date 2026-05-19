@@ -15,24 +15,37 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ email: '', password: '' });
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    
-    // Simulate JWT Login
-    setTimeout(() => {
-      if (form.email === 'admin@eunousit.com' && form.password === 'admin123') {
-        localStorage.setItem('certiflow_token', 'mock_jwt_token_123');
+
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
         router.push('/admin/dashboard');
       } else {
         toast({
-          variant: "destructive",
-          title: "Login Failed",
-          description: "Invalid email or password. Please use admin@eunousit.com / admin123",
+          variant: 'destructive',
+          title: 'Login Failed',
+          description: data?.message || 'Invalid email or password.',
         });
       }
+    } catch (err) {
+      toast({
+        variant: 'destructive',
+        title: 'Network Error',
+        description: 'Unable to contact authentication server.',
+      });
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   return (

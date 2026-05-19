@@ -9,7 +9,6 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { ShieldCheck, Sparkles, User, BookOpen, Clock, Building, Save, RotateCcw, AlertTriangle } from 'lucide-react';
-import { createCertificate } from '@/app/lib/mock-data';
 import { flagInconsistentCertificateData } from '@/ai/flows/flag-inconsistent-certificate-data';
 
 export default function CreateCertificatePage() {
@@ -69,27 +68,55 @@ export default function CreateCertificatePage() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    const regNum = `EUNOUS-REG-2026-${Math.floor(1000 + Math.random() * 9000)}`;
-    
-    setTimeout(() => {
-      const newCert = createCertificate({
-        ...form,
-        totalHours: parseInt(form.totalHours),
-        registrationNumber: regNum,
+    try {
+      const payload = {
+        fullName: form.studentName,
+        fatherName: form.fatherName,
+        courseName: form.courseName,
+        collegeName: form.collegeName,
+        branch: form.branch,
+        semester: form.semester,
+        internshipDomain: form.internshipDomain,
+        startDate: form.startDate,
+        endDate: form.endDate,
+        totalHours: parseInt(form.totalHours || '0'),
+        performance: form.performance,
+        authorizedSignatory: form.authorizedSignatory,
+        companyName: 'Eunous IT',
+      };
+
+      const res = await fetch('/api/certificates', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
       });
-      
-      toast({
-        title: "Certificate Generated",
-        description: `Successfully issued ${regNum} to ${form.studentName}`,
-      });
-      
-      router.push(`/certificate/${regNum}`);
+
+      const data = await res.json();
+
+      if (res.status === 401) {
+        toast({ title: 'Unauthorized', description: 'Please sign in again.', variant: 'destructive' });
+        router.push('/admin/login');
+        return;
+      }
+
+      if (res.ok && data?.success) {
+        const reg = data?.certificate?.registrationNumber || data?.data?.registrationNumber || data?.registrationNumber || data?.data?.certificate?.registrationNumber;
+        const regNum = reg || `EUNOUS-REG-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+
+        toast({ title: "Certificate Generated", description: `Successfully issued ${regNum} to ${form.studentName}` });
+        router.push(`/certificate/${regNum}`);
+      } else {
+        toast({ title: 'Creation Failed', description: data?.message || 'Unable to create certificate', variant: 'destructive' });
+      }
+    } catch (err) {
+      toast({ title: 'Network Error', description: 'Could not contact the certificate server.', variant: 'destructive' });
+    } finally {
       setLoading(false);
-    }, 1500);
+    }
   };
 
   return (

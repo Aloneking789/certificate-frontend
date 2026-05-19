@@ -10,8 +10,9 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
   const handleLogout = () => {
-    localStorage.removeItem('certiflow_token');
-    router.push('/admin/login');
+    fetch('/api/auth/logout', { method: 'POST' }).then(() => {
+      router.push('/admin/login');
+    }).catch(() => router.push('/admin/login'));
   };
 
   const menuItems = [

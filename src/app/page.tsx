@@ -30,7 +30,7 @@ import { Card, CardContent } from '@/components/ui/card';
 
 export default function Home() {
   const heroImg = PlaceHolderImages.find(img => img.id === 'hero-bg')?.imageUrl;
-  const studentImg = PlaceHolderImages.find(img => img.id === 'student-success')?.imageUrl;
+  const studentImg = "https://plus.unsplash.com/premium_photo-1661751188825-710ec341b907?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
   const securityImg = PlaceHolderImages.find(img => img.id === 'security-tech')?.imageUrl;
   const teamImg = PlaceHolderImages.find(img => img.id === 'collaboration')?.imageUrl;
   const certImg = PlaceHolderImages.find(img => img.id === 'certificate-closeup')?.imageUrl;
