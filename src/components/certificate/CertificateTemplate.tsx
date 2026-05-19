@@ -3,12 +3,13 @@ import React from 'react';
 import { Certificate } from '@/app/lib/mock-data';
 import { QRCode } from './QRCode';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { CheckCircle2, AlertCircle } from 'lucide-react';
 
 export function CertificateTemplate({ data }: { data: Certificate }) {
   const logo = PlaceHolderImages.find(img => img.id === 'company-logo')?.imageUrl;
 
   return (
-    <div className="relative w-full max-w-[1100px] aspect-[1.414/1] bg-white border-[16px] border-primary/10 shadow-2xl p-12 overflow-hidden print:m-0 print:border-[10px] mx-auto">
+    <div className="relative w-full max-w-[1100px] aspect-[1.414/1] bg-white border-[16px] border-primary/10 shadow-2xl pt-12 px-12 pb-16 overflow-hidden print:m-0 print:border-[10px] print:pb-12 mx-auto">
       {/* Decorative corner elements */}
       <div className="absolute top-0 left-0 w-48 h-48 bg-primary/5 rounded-br-full -translate-x-12 -translate-y-12" />
       <div className="absolute bottom-0 right-0 w-48 h-48 bg-accent/5 rounded-tl-full translate-x-12 translate-y-12" />
@@ -25,6 +26,19 @@ export function CertificateTemplate({ data }: { data: Certificate }) {
         <div className="text-right">
           <p className="text-xs font-semibold text-muted-foreground uppercase mb-1">Registration No.</p>
           <p className="text-sm font-code font-bold text-primary">{data.registrationNumber}</p>
+          <div className="mt-3">
+            {data.status === 'valid' ? (
+              <div className="inline-flex items-center gap-2 bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-sm font-semibold uppercase">
+                <CheckCircle2 className="w-4 h-4" />
+                Verified
+              </div>
+            ) : (
+              <div className="inline-flex items-center gap-2 bg-destructive/10 text-destructive px-3 py-1 rounded-full text-sm font-semibold uppercase">
+                <AlertCircle className="w-4 h-4" />
+                Not Verified
+              </div>
+            )}
+          </div>
           <div className="mt-4">
             <p className="text-xs font-semibold text-muted-foreground uppercase mb-1">Issue Date</p>
             <p className="text-sm font-semibold text-primary">{data.issueDate}</p>

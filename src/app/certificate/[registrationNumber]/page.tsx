@@ -79,6 +79,7 @@ export default function CertificatePreviewPage() {
 
   return (
     <div className="min-h-screen bg-zinc-100 py-12 px-4">
+      <style>{`@media print{body *{visibility:hidden!important}.print-only,.print-only *{visibility:visible!important}.print-only{position:absolute;left:0;top:0;width:100%}}`}</style>
       <div className="max-w-[1100px] mx-auto mb-8 flex justify-between items-center no-print">
         <Link href={`/verify`}>
           <Button variant="ghost" className="gap-2">
@@ -102,7 +103,7 @@ export default function CertificatePreviewPage() {
         <CertificateTemplate data={certificate} />
       </div>
 
-      <div className="hidden print:block">
+      <div className="hidden print:block print-only">
         <CertificateTemplate data={certificate} />
       </div>
     </div>
