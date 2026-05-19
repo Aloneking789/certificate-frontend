@@ -66,7 +66,7 @@ export function CertificateTemplate({ data }: { data: Certificate }) {
       {/* Footer Section */}
       <div className="flex justify-between items-end mt-auto">
         <div className="flex flex-col items-center">
-          <QRCode value={`https://eunous-certiflow.vercel.app/verify/${data.registrationNumber}`} size={100} />
+          <QRCode value={`https://certificate-frontend-navy.vercel.app/certificate/${encodeURIComponent(data.registrationNumber)}`} size={100} />
           <p className="text-[10px] mt-2 text-muted-foreground font-code">Verify authenticity</p>
         </div>
         
