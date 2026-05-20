@@ -350,11 +350,11 @@ export function CertificateTemplate({ data }: { data: Certificate }) {
           <div
             className="cert-band"
             style={{
-            background: 'linear-gradient(135deg, #0a2342 0%, #163a6b 50%, #0a2342 100%)',
-            borderTop: '3px solid #b8973a',
-            padding: '10px 40px',
-            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          }}>
+              background: 'linear-gradient(135deg, #0a2342 0%, #163a6b 50%, #0a2342 100%)',
+              borderTop: '3px solid #b8973a',
+              padding: '10px 40px',
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            }}>
             <img
               src={logoUrl}
               alt="Logo"
