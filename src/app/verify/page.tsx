@@ -9,7 +9,8 @@ import { Search, ShieldCheck, AlertCircle, CheckCircle2, QrCode, Printer, Extern
 import Link from 'next/link';
 
 type VerifyResult = {
-  certificateNumber: string;
+  registrationNumber: string;
+  certificateNumber?: string;
   studentName: string;
   internshipDomain?: string;
   courseName?: string;
@@ -34,11 +35,14 @@ export default function VerifyPage() {
     setResult(null);
 
     try {
-      const res = await fetch(`/api/certificates/verify/${encodeURIComponent(regNumber)}`);
+      // Use certificate-number based verify endpoint now
+      const res = await fetch(`/api/certificates/number/${encodeURIComponent(regNumber)}`);
       const data = await res.json();
-      if (res.ok && data?.certificate) {
-        const c = data.certificate;
+      // backend returns the object inside `data` (see example)
+      if (res.ok && data?.data) {
+        const c = data.data;
         const mapped: VerifyResult = {
+          registrationNumber: c.registrationNumber,
           certificateNumber: c.certificateNumber || c.registrationNumber,
           studentName: c.fullName,
           internshipDomain: c.internshipDomain || '',
@@ -48,7 +52,7 @@ export default function VerifyPage() {
           endDate: c.endDate ? new Date(c.endDate).toLocaleDateString() : '',
           totalHours: c.totalHours ?? 0,
           performance: c.performance || 'Very Good',
-          issueDate: c.certificateIssueDate ? new Date(c.certificateIssueDate).toLocaleDateString() : (c.createdAt ? new Date(c.createdAt).toLocaleDateString() : ''),
+          issueDate: c.certificateIssueDate ? new Date(c.certificateIssueDate).toLocaleDateString() : (c.issueDate ? new Date(c.issueDate).toLocaleDateString() : (c.createdAt ? new Date(c.createdAt).toLocaleDateString() : '')),
           isVerified: c.isVerified
         };
         setResult(mapped);
@@ -69,7 +73,7 @@ export default function VerifyPage() {
       <main className="container mx-auto px-4 py-16 max-w-4xl">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-headline font-bold text-primary mb-4 tracking-tight">Verify Credential</h1>
-          <p className="text-muted-foreground text-lg">Enter the unique registration number provided on the certificate to authenticate.</p>
+          <p className="text-muted-foreground text-lg">Enter the certificate number printed on the certificate to authenticate.</p>
         </div>
 
         <Card className="shadow-xl border-none mb-12 overflow-hidden">
@@ -79,7 +83,7 @@ export default function VerifyPage() {
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
                 <Input 
-                  placeholder="e.g., EUNOUS-REG-2026-0001" 
+                  placeholder="e.g., EUIT-CS26-M002" 
                   className="h-14 pl-12 text-lg font-code"
                   value={regNumber}
                   onChange={(e) => {
@@ -139,8 +143,8 @@ export default function VerifyPage() {
               <div className="grid md:grid-cols-2 gap-8 mb-8">
                 <div className="space-y-4">
                   <div>
-            <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1">Certificate Number</p>
-              <p className="text-lg font-code font-bold text-primary">{result.certificateNumber}</p>
+        <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1">Registration Number</p>
+    <p className="text-lg font-code font-bold text-primary">{result.certificateNumber || result.registrationNumber}</p>
                   </div>
                   <div>
                     <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1">Course & College</p>
@@ -168,7 +172,7 @@ export default function VerifyPage() {
               </div>
               
               <div className="flex flex-col sm:flex-row gap-4 mt-8 pt-8 border-t">
-                <Link href={`/certificate/${result.certificateNumber}`} className="flex-1">
+                <Link href={`/certificate/${result.certificateNumber || result.registrationNumber}`} className="flex-1">
                   <Button className="w-full gap-2 h-12">
                     <ExternalLink className="w-4 h-4" />
                     View Original Certificate

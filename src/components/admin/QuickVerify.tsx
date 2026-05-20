@@ -8,7 +8,7 @@ import { Search, CheckCircle2, AlertCircle, ExternalLink, Printer } from 'lucide
 import Link from 'next/link';
 
 type VerifyResult = {
-  certificateNumber: string;
+  registrationNumber: string;
   studentName: string;
   internshipDomain?: string;
   courseName?: string;
@@ -28,17 +28,17 @@ export default function QuickVerify() {
   const [error, setError] = useState('');
 
   const handleSearch = async () => {
-    if (!reg) return setError('Enter registration number');
+    if (!reg) return setError('Enter certificate number');
     setLoading(true);
     setError('');
     setResult(null);
     try {
-      const res = await fetch(`/api/certificates/verify/${encodeURIComponent(reg)}`);
+      const res = await fetch(`/api/certificates/number/${encodeURIComponent(reg)}`);
       const data = await res.json();
-      if (res.ok && data?.certificate) {
-        const c = data.certificate;
+      if (res.ok && data?.data) {
+        const c = data.data;
         const mapped: VerifyResult = {
-          certificateNumber: c.certificateNumber || c.registrationNumber,
+          registrationNumber: c.registrationNumber,
           studentName: c.fullName,
           internshipDomain: c.internshipDomain || '',
           courseName: c.courseName || '',
@@ -47,7 +47,7 @@ export default function QuickVerify() {
           endDate: c.endDate ? new Date(c.endDate).toLocaleDateString() : '',
           totalHours: c.totalHours ?? 0,
           performance: c.performance || 'Very Good',
-          issueDate: c.certificateIssueDate ? new Date(c.certificateIssueDate).toLocaleDateString() : (c.createdAt ? new Date(c.createdAt).toLocaleDateString() : ''),
+          issueDate: c.certificateIssueDate ? new Date(c.certificateIssueDate).toLocaleDateString() : (c.issueDate ? new Date(c.issueDate).toLocaleDateString() : (c.createdAt ? new Date(c.createdAt).toLocaleDateString() : '')),
           isVerified: c.isVerified
         };
         setResult(mapped);
@@ -67,7 +67,7 @@ export default function QuickVerify() {
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
-            placeholder="Enter Registration No."
+            placeholder="Enter Certificate No."
             value={reg}
             onChange={(e: any) => setReg(e.target.value)}
             onKeyPress={(e: any) => e.key === 'Enter' && handleSearch()}
@@ -94,13 +94,13 @@ export default function QuickVerify() {
               <div>
                 <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-1">Student</p>
                 <p className="text-lg font-semibold text-primary">{result.studentName}</p>
-                <p className="text-xs font-code text-muted-foreground mt-1">{result.certificateNumber}</p>
+                <p className="text-xs font-code text-muted-foreground mt-1">{result.registrationNumber}</p>
               </div>
               <div className="text-right space-y-2">
                 <Badge variant="default" className={result.isVerified ? 'bg-emerald-100 text-emerald-700 h-8 px-3' : 'bg-destructive/10 text-destructive h-8 px-3'}>
                   {result.isVerified ? 'VALID' : 'INVALID'}
                 </Badge>
-                <Link href={`/certificate/${result.certificateNumber}`}>
+                <Link href={`/certificate/${result.registrationNumber}`}>
                   <Button variant="ghost" className="mt-2">View</Button>
                 </Link>
               </div>

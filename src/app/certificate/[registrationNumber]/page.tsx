@@ -19,10 +19,11 @@ export default function CertificatePreviewPage() {
     const fetchCert = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`/api/certificates/verify/${encodeURIComponent(certParam)}`);
+        // prefer the certificate-number proxy endpoint (backend returns { success: true, data: { ... } })
+        const res = await fetch(`/api/certificates/number/${encodeURIComponent(certParam)}`);
         const data = await res.json();
-        if (res.ok && data?.certificate) {
-          const c = data.certificate;
+        if (res.ok && data?.data) {
+          const c = data.data;
           // Map backend fields to template fields
           const mapped = {
             id: String(c.id),
