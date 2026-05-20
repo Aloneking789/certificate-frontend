@@ -3,6 +3,8 @@ export interface Certificate {
   registrationNumber: string;
   studentName: string;
   fatherName: string;
+  gender?: 'Male' | 'Female';
+  studentRoll?: string;
   courseName: string;
   collegeName: string;
   branch: string;
@@ -22,6 +24,7 @@ const certificates: Certificate[] = [
     id: '1',
     registrationNumber: 'EUNOUS-REG-2026-0001',
     studentName: 'Aarav Sharma',
+    gender: 'Male',
     fatherName: 'Rajesh Sharma',
     courseName: 'B.Tech',
     collegeName: 'IIT Delhi',
@@ -40,6 +43,7 @@ const certificates: Certificate[] = [
     id: '2',
     registrationNumber: 'EUNOUS-REG-2026-0002',
     studentName: 'Priya Verma',
+    gender: 'Female',
     fatherName: 'Amit Verma',
     courseName: 'MCA',
     collegeName: 'NIT Trichy',

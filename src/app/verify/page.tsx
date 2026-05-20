@@ -82,7 +82,18 @@ export default function VerifyPage() {
                   placeholder="e.g., EUNOUS-REG-2026-0001" 
                   className="h-14 pl-12 text-lg font-code"
                   value={regNumber}
-                  onChange={(e) => setRegNumber(e.target.value)}
+                  onChange={(e) => {
+                    const raw = e.target.value || '';
+                    // Allow only uppercase letters, digits and hyphen; auto-uppercase pasted/typed text
+                    const sanitized = raw.toUpperCase().replace(/[^A-Z0-9-]/g, '');
+                    setRegNumber(sanitized);
+                  }}
+                  onPaste={(e) => {
+                    const paste = (e.clipboardData || (window as any).clipboardData).getData('text') || '';
+                    const sanitized = paste.toUpperCase().replace(/[^A-Z0-9-]/g, '');
+                    e.preventDefault();
+                    setRegNumber(sanitized);
+                  }}
                   onKeyPress={(e) => e.key === 'Enter' && handleVerify()}
                 />
               </div>

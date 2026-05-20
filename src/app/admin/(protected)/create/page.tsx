@@ -31,6 +31,9 @@ export default function CreateCertificatePage() {
     totalHours: '',
     performance: 'Excellent' as const,
     authorizedSignatory: 'Director, Eunous IT',
+    gender: 'Male',
+    studentRoll: '',
+    issueDate: new Date().toISOString().split('T')[0],
   });
 
   const handleAudit = async () => {
@@ -76,6 +79,8 @@ export default function CreateCertificatePage() {
       const payload = {
         fullName: form.studentName,
         fatherName: form.fatherName,
+        gender: form.gender,
+        studentRoll: form.studentRoll,
         courseName: form.courseName,
         collegeName: form.collegeName,
         branch: form.branch,
@@ -86,6 +91,7 @@ export default function CreateCertificatePage() {
         totalHours: parseInt(form.totalHours || '0'),
         performance: form.performance,
         authorizedSignatory: form.authorizedSignatory,
+        issueDate: form.issueDate,
         companyName: 'Eunous IT',
       };
 
@@ -155,6 +161,26 @@ export default function CreateCertificatePage() {
                       required 
                       value={form.fatherName}
                       onChange={e => setForm({...form, fatherName: e.target.value})}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Gender</Label>
+                    <Select value={form.gender} onValueChange={v => setForm({...form, gender: v})}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Male">Male</SelectItem>
+                        <SelectItem value="Female">Female</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Student Roll Number</Label>
+                    <Input
+                      placeholder="e.g. CS2026-001"
+                      value={form.studentRoll}
+                      onChange={e => setForm({...form, studentRoll: e.target.value})}
                     />
                   </div>
                 </div>
@@ -250,6 +276,15 @@ export default function CreateCertificatePage() {
                     />
                   </div>
                   <div className="space-y-2">
+                    <Label>Issue Date</Label>
+                    <Input
+                      type="date"
+                      required
+                      value={form.issueDate}
+                      onChange={e => setForm({...form, issueDate: e.target.value})}
+                    />
+                  </div>
+                  <div className="space-y-2">
                     <Label>Total Hours Reported</Label>
                     <Input 
                       type="number" 
@@ -276,25 +311,6 @@ export default function CreateCertificatePage() {
                 </div>
 
                 {/* AI Audit Trigger */}
-                <div className="pt-4">
-                  <Button 
-                    type="button" 
-                    variant="secondary" 
-                    className="w-full gap-2 border-2 border-primary/20 hover:bg-primary/10"
-                    onClick={handleAudit}
-                    disabled={auditing}
-                  >
-                    <Sparkles className={`w-4 h-4 ${auditing ? 'animate-spin' : ''}`} />
-                    {auditing ? 'AI Auditing Data...' : 'Perform AI Credential Audit'}
-                  </Button>
-                  
-                  {auditResult && (
-                    <div className={`mt-3 p-3 rounded-lg text-sm flex gap-2 ${auditResult.isInconsistent ? 'bg-destructive/10 text-destructive' : 'bg-emerald-50 text-emerald-700'}`}>
-                      {auditResult.isInconsistent ? <AlertTriangle className="w-4 h-4 shrink-0" /> : <ShieldCheck className="w-4 h-4 shrink-0" />}
-                      <p>{auditResult.isInconsistent ? auditResult.reason : 'AI Audit complete. Data consistency verified.'}</p>
-                    </div>
-                  )}
-                </div>
               </CardContent>
             </Card>
           </div>
@@ -317,6 +333,9 @@ export default function CreateCertificatePage() {
               totalHours: '',
               performance: 'Excellent',
               authorizedSignatory: 'Director, Eunous IT',
+              gender: 'Male',
+              studentRoll: '',
+              issueDate: new Date().toISOString().split('T')[0],
             })}>
               <RotateCcw className="w-5 h-5" />
               Reset Form
