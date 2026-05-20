@@ -4,6 +4,7 @@ import { CertificateTemplate } from '@/components/certificate/CertificateTemplat
 import { Button } from '@/components/ui/button';
 import { Printer, Download, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { Navbar } from '@/components/layout/Navbar';
 import { useEffect, useState } from 'react';
 
 export default function CertificatePreviewPage() {
@@ -84,6 +85,7 @@ export default function CertificatePreviewPage() {
 
   return (
     <div className="min-h-screen bg-zinc-100 py-12 px-4">
+      <Navbar />
       <style>{`@media print{body *{visibility:hidden!important}.print-only,.print-only *{visibility:visible!important}.print-only{position:absolute;left:0;top:0;width:100%}}`}</style>
       <div className="max-w-[1100px] mx-auto mb-8 flex justify-between items-center no-print">
         <Link href={`/verify`}>

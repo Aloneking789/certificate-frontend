@@ -300,7 +300,7 @@ export function CertificateTemplate({ data }: { data: Certificate }) {
                 <div style={{ padding: 6, border: '1.5px solid #d4b05a', borderRadius: 6, background: '#fff' }}>
                   <QRCode
                     value={`https://certificate-frontend-navy.vercel.app/certificate/${encodeURIComponent(data.certificateNumber || data.registrationNumber)}`}
-                    size={160}
+                    size={80}
                   />
                 </div>
                 <span style={{ fontSize: 9, color: '#8a7240', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
