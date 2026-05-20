@@ -29,6 +29,7 @@ export default function CertificatePreviewPage() {
             id: String(c.id),
             registrationNumber: c.registrationNumber,
             certificateNumber: c.certificateNumber || c.registrationNumber,
+            studentRoll: c.studentRoll || c.studentRoll || '',
             studentName: c.fullName,
             fatherName: c.fatherName || '',
             courseName: c.courseName || '',

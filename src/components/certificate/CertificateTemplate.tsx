@@ -35,6 +35,30 @@ export function CertificateTemplate({ data }: { data: Certificate }) {
           print-color-adjust: exact;
           color-adjust: exact;
         }
+
+        /* Responsive adjustments for small screens */
+        .cert-root .header-band img { width: 220px; height: auto; }
+        .cert-root .qr-box { width: 80px; height: 80px; }
+        .cert-root .signature-img { width: 148px; }
+
+        @media (max-width: 640px) {
+          .cert-root { padding: 6px; }
+          .cert-root .header-band { padding: 12px !important; flex-direction: column !important; align-items: flex-start !important; gap: 8px !important; }
+          .cert-root .header-left { gap: 10px !important; }
+          .cert-root .header-band img { width: 140px !important; }
+          .cert-root .header-center { display: none !important; }
+          .cert-root .header-right { text-align: left !important; }
+          .cert-root h2 { font-size: 20px !important; }
+          .cert-root h3 { font-size: 18px !important; }
+          .cert-root p { font-size: 13px !important; }
+          .cert-root .details-strip { grid-template-columns: 1fr !important; }
+          .cert-root .footer-row { flex-direction: column !important; align-items: center !important; gap: 12px !important; }
+          .cert-root .qr-box { width: 64px !important; height: 64px !important; padding: 4px !important; }
+          .cert-root .signature-img { width: 120px !important; }
+          .cert-root .cert-watermark { font-size: 36px !important; }
+          .cert-root .reg-number { font-size: 12px !important; }
+          .cert-root .roll-number { font-size: 12px !important; }
+        }
       `}</style>
       {/* Outer gold border frame */}
       <div
@@ -56,7 +80,7 @@ export function CertificateTemplate({ data }: { data: Certificate }) {
 
           {/* ── TOP HEADER BAND ── */}
           <div
-            className="cert-band"
+            className="cert-band header-band"
             style={{
               background: 'linear-gradient(135deg, #0a2342 0%, #163a6b 50%, #0a2342 100%)',
               padding: '16px 40px 14px',
@@ -67,7 +91,7 @@ export function CertificateTemplate({ data }: { data: Certificate }) {
             }}
           >
             {/* Logo */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+            <div className="header-left" style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
               {logoUrl && (
                 <img
                   src={logoUrl}
@@ -94,7 +118,7 @@ export function CertificateTemplate({ data }: { data: Certificate }) {
             </div>
 
             {/* Center ornament */}
-            <div style={{ textAlign: 'center', flex: 1, padding: '0 32px' }}>
+            <div className="header-center" style={{ textAlign: 'center', flex: 1, padding: '0 32px' }}>
               {/* Decorative rule with star */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginBottom: 6 }}>
                 <div style={{ height: 1, width: 60, background: 'linear-gradient(to right, transparent, #d4b05a)' }} />
@@ -107,13 +131,19 @@ export function CertificateTemplate({ data }: { data: Certificate }) {
             </div>
 
             {/* Reg No & Status */}
-            <div style={{ textAlign: 'right' }}>
+            <div className="header-right" style={{ textAlign: 'right' }}>
               <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 9, letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 4 }}>
                 Certificate No.
               </div>
-              <div style={{ color: '#d4b05a', fontSize: 13, fontFamily: 'Courier New, monospace', fontWeight: 700, letterSpacing: '0.08em', marginBottom: 10 }}>
+              <div className="reg-number" style={{ color: '#d4b05a', fontSize: 13, fontFamily: 'Courier New, monospace', fontWeight: 700, letterSpacing: '0.08em', marginBottom: 10 }}>
                 {data.certificateNumber || data.registrationNumber}
               </div>
+              {data.studentRoll && (
+                <div className="roll-number" style={{ color: 'rgba(255,255,255,0.75)', fontSize: 11, marginTop: 4 }}>
+                  <div style={{ opacity: 0.9, fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase' }}>Roll No.</div>
+                  <div style={{ color: '#fff', fontFamily: 'Courier New, monospace', fontWeight: 700 }}>{data.studentRoll}</div>
+                </div>
+              )}
               {data.status === 'valid' ? (
                 <div style={{
                   display: 'inline-flex', alignItems: 'center', gap: 6,
@@ -142,7 +172,7 @@ export function CertificateTemplate({ data }: { data: Certificate }) {
           <div style={{ padding: '20px 48px 18px', position: 'relative' }}>
 
             {/* Watermark text */}
-            <div style={{
+            <div className="cert-watermark" style={{
               position: 'absolute', top: '50%', left: '50%',
               transform: 'translate(-50%, -50%) rotate(-30deg)',
               fontSize: 110, fontFamily: 'Georgia, serif', fontWeight: 700,
@@ -227,7 +257,7 @@ export function CertificateTemplate({ data }: { data: Certificate }) {
             </div>
 
             {/* ── DETAILS STRIP ── */}
-            <div style={{
+            <div className="details-strip" style={{
               display: 'grid', gridTemplateColumns: '1fr 1px 1fr 1px 1fr',
               border: '1.5px solid #d4b05a',
               borderRadius: 8, overflow: 'hidden',
@@ -261,16 +291,16 @@ export function CertificateTemplate({ data }: { data: Certificate }) {
             </div>
 
             {/* ── FOOTER ROW: QR + Issue date + Signature ── */}
-            <div style={{
+            <div className="footer-row" style={{
               display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between',
               position: 'relative', zIndex: 1,
             }}>
               {/* QR Code */}
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+              <div className="qr-box" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
                 <div style={{ padding: 6, border: '1.5px solid #d4b05a', borderRadius: 6, background: '#fff' }}>
                   <QRCode
                     value={`https://certificate-frontend-navy.vercel.app/certificate/${encodeURIComponent(data.certificateNumber || data.registrationNumber)}`}
-                    size={80}
+                    size={160}
                   />
                 </div>
                 <span style={{ fontSize: 9, color: '#8a7240', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
@@ -296,11 +326,12 @@ export function CertificateTemplate({ data }: { data: Certificate }) {
               </div>
 
               {/* Signature */}
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <div className="signature-box" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 {signatureUrl && (
                   <img
                     src={signatureUrl}
                     alt="Signature"
+                    className="signature-img"
                     style={{ width: 148, height: 'auto', objectFit: 'contain', marginBottom: 4, filter: 'grayscale(0.05)' }}
                   />
                 )}
