@@ -76,14 +76,15 @@ export default function CreateCertificatePage() {
     setLoading(true);
 
     try {
-      const payload = {
+      const payload: any = {
         fullName: form.studentName,
         fatherName: form.fatherName,
         gender: form.gender,
         studentRoll: form.studentRoll,
         courseName: form.courseName,
         collegeName: form.collegeName,
-        branch: form.branch,
+        // include branch only if provided
+        ...(form.branch ? { branch: form.branch } : {}),
         semester: form.semester,
         internshipDomain: form.internshipDomain,
         startDate: form.startDate,
@@ -110,11 +111,11 @@ export default function CreateCertificatePage() {
       }
 
       if (res.ok && data?.success) {
-        const reg = data?.certificate?.registrationNumber || data?.data?.registrationNumber || data?.registrationNumber || data?.data?.certificate?.registrationNumber;
-        const regNum = reg || `EUNOUS-REG-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+        const certNum = data?.certificate?.certificateNumber || data?.certificate?.registrationNumber || data?.data?.certificateNumber || data?.data?.registrationNumber || data?.certificate?.registrationNumber || data?.data?.certificate?.registrationNumber || data?.registrationNumber;
+        const display = certNum || `EUNOUS-REG-2026-${Math.floor(1000 + Math.random() * 9000)}`;
 
-        toast({ title: "Certificate Generated", description: `Successfully issued ${regNum} to ${form.studentName}` });
-        router.push(`/certificate/${regNum}`);
+        toast({ title: "Certificate Generated", description: `Successfully issued ${display} to ${form.studentName}` });
+        router.push(`/certificate/${display}`);
       } else {
         toast({ title: 'Creation Failed', description: data?.message || 'Unable to create certificate', variant: 'destructive' });
       }
@@ -201,10 +202,9 @@ export default function CreateCertificatePage() {
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label>Branch/Stream</Label>
+                    <Label>Branch/Stream <span className="text-sm text-muted-foreground">(optional)</span></Label>
                     <Input 
                       placeholder="e.g. Computer Science" 
-                      required 
                       value={form.branch}
                       onChange={e => setForm({...form, branch: e.target.value})}
                     />

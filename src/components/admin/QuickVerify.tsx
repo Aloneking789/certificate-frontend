@@ -8,7 +8,7 @@ import { Search, CheckCircle2, AlertCircle, ExternalLink, Printer } from 'lucide
 import Link from 'next/link';
 
 type VerifyResult = {
-  registrationNumber: string;
+  certificateNumber: string;
   studentName: string;
   internshipDomain?: string;
   courseName?: string;
@@ -38,7 +38,7 @@ export default function QuickVerify() {
       if (res.ok && data?.certificate) {
         const c = data.certificate;
         const mapped: VerifyResult = {
-          registrationNumber: c.registrationNumber,
+          certificateNumber: c.certificateNumber || c.registrationNumber,
           studentName: c.fullName,
           internshipDomain: c.internshipDomain || '',
           courseName: c.courseName || '',
@@ -94,13 +94,13 @@ export default function QuickVerify() {
               <div>
                 <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-1">Student</p>
                 <p className="text-lg font-semibold text-primary">{result.studentName}</p>
-                <p className="text-xs font-code text-muted-foreground mt-1">{result.registrationNumber}</p>
+                <p className="text-xs font-code text-muted-foreground mt-1">{result.certificateNumber}</p>
               </div>
               <div className="text-right space-y-2">
                 <Badge variant="default" className={result.isVerified ? 'bg-emerald-100 text-emerald-700 h-8 px-3' : 'bg-destructive/10 text-destructive h-8 px-3'}>
                   {result.isVerified ? 'VALID' : 'INVALID'}
                 </Badge>
-                <Link href={`/certificate/${result.registrationNumber}`}>
+                <Link href={`/certificate/${result.certificateNumber}`}>
                   <Button variant="ghost" className="mt-2">View</Button>
                 </Link>
               </div>

@@ -109,10 +109,10 @@ export function CertificateTemplate({ data }: { data: Certificate }) {
             {/* Reg No & Status */}
             <div style={{ textAlign: 'right' }}>
               <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 9, letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 4 }}>
-                Registration No.
+                Certificate No.
               </div>
               <div style={{ color: '#d4b05a', fontSize: 13, fontFamily: 'Courier New, monospace', fontWeight: 700, letterSpacing: '0.08em', marginBottom: 10 }}>
-                {data.registrationNumber}
+                {data.certificateNumber || data.registrationNumber}
               </div>
               {data.status === 'valid' ? (
                 <div style={{
@@ -215,7 +215,9 @@ export function CertificateTemplate({ data }: { data: Certificate }) {
                 {(data.gender === 'Female') ? 'Daughter' : 'Son'} of{' '}
                 <strong style={{ color: '#0a2342' }}>{`Mr. ${data.fatherName}`}</strong>,
                 a student of{' '}
-                <strong style={{ color: '#0a2342' }}>{data.courseName} ({data.branch})</strong>{' '}
+                <strong style={{ color: '#0a2342' }}>
+                  {data.courseName}{data.branch ? ` (${data.branch})` : ''}
+                </strong>{' '}
                 at{' '}
                 <strong style={{ color: '#0a2342' }}>{data.collegeName}</strong>,
                 has successfully completed an internship programme in{' '}
@@ -267,7 +269,7 @@ export function CertificateTemplate({ data }: { data: Certificate }) {
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
                 <div style={{ padding: 6, border: '1.5px solid #d4b05a', borderRadius: 6, background: '#fff' }}>
                   <QRCode
-                    value={`https://certificate-frontend-navy.vercel.app/certificate/${encodeURIComponent(data.registrationNumber)}`}
+                    value={`https://certificate-frontend-navy.vercel.app/certificate/${encodeURIComponent(data.certificateNumber || data.registrationNumber)}`}
                     size={80}
                   />
                 </div>

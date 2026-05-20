@@ -155,13 +155,13 @@ export default function ManageCertificatesPage() {
                   certificates.map((cert) => (
                     <TableRow key={cert.id} className="hover:bg-secondary/10 transition-colors">
                       <TableCell className="font-semibold text-primary pl-6">{cert.fullName || cert.studentName}</TableCell>
-                      <TableCell className="font-code text-xs text-muted-foreground">{cert.registrationNumber}</TableCell>
+                      <TableCell className="font-code text-xs text-muted-foreground">{cert.certificateNumber || cert.registrationNumber}</TableCell>
                       <TableCell>{cert.internshipDomain}</TableCell>
                       <TableCell>{cert.totalHours} hrs</TableCell>
                       <TableCell className="text-sm">{new Date(cert.certificateIssueDate || cert.createdAt || cert.issueDate).toLocaleDateString()}</TableCell>
                       <TableCell className="text-right pr-6">
                         <div className="flex justify-end gap-2">
-                          <Link href={`/certificate/${cert.registrationNumber}`}>
+                          <Link href={`/certificate/${cert.certificateNumber || cert.registrationNumber}`}>
                             <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary">
                               <Eye className="w-4 h-4" />
                             </Button>

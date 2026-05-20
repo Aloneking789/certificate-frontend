@@ -8,7 +8,9 @@ import { useEffect, useState } from 'react';
 
 export default function CertificatePreviewPage() {
   const params = useParams();
-  const regNumber = params.registrationNumber as string;
+  // the route still uses [registrationNumber] in the file name for compatibility with routing,
+  // but we treat the param as a certificateNumber (preferred) and fall back as needed.
+  const certParam = (params.registrationNumber || params.certificateNumber) as string;
   const [certificate, setCertificate] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -17,7 +19,7 @@ export default function CertificatePreviewPage() {
     const fetchCert = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`/api/certificates/verify/${encodeURIComponent(regNumber)}`);
+        const res = await fetch(`/api/certificates/verify/${encodeURIComponent(certParam)}`);
         const data = await res.json();
         if (res.ok && data?.certificate) {
           const c = data.certificate;
@@ -25,6 +27,7 @@ export default function CertificatePreviewPage() {
           const mapped = {
             id: String(c.id),
             registrationNumber: c.registrationNumber,
+            certificateNumber: c.certificateNumber || c.registrationNumber,
             studentName: c.fullName,
             fatherName: c.fatherName || '',
             courseName: c.courseName || '',
@@ -54,7 +57,7 @@ export default function CertificatePreviewPage() {
 
     fetchCert();
     return () => { mounted = false };
-  }, [regNumber]);
+  }, [certParam]);
 
   const handlePrint = () => {
     window.print();

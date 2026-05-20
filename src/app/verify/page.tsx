@@ -9,7 +9,7 @@ import { Search, ShieldCheck, AlertCircle, CheckCircle2, QrCode, Printer, Extern
 import Link from 'next/link';
 
 type VerifyResult = {
-  registrationNumber: string;
+  certificateNumber: string;
   studentName: string;
   internshipDomain?: string;
   courseName?: string;
@@ -39,7 +39,7 @@ export default function VerifyPage() {
       if (res.ok && data?.certificate) {
         const c = data.certificate;
         const mapped: VerifyResult = {
-          registrationNumber: c.registrationNumber,
+          certificateNumber: c.certificateNumber || c.registrationNumber,
           studentName: c.fullName,
           internshipDomain: c.internshipDomain || '',
           courseName: c.courseName || '',
@@ -139,8 +139,8 @@ export default function VerifyPage() {
               <div className="grid md:grid-cols-2 gap-8 mb-8">
                 <div className="space-y-4">
                   <div>
-                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1">Registration Number</p>
-                    <p className="text-lg font-code font-bold text-primary">{result.registrationNumber}</p>
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1">Certificate Number</p>
+              <p className="text-lg font-code font-bold text-primary">{result.certificateNumber}</p>
                   </div>
                   <div>
                     <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1">Course & College</p>
@@ -168,7 +168,7 @@ export default function VerifyPage() {
               </div>
               
               <div className="flex flex-col sm:flex-row gap-4 mt-8 pt-8 border-t">
-                <Link href={`/certificate/${result.registrationNumber}`} className="flex-1">
+                <Link href={`/certificate/${result.certificateNumber}`} className="flex-1">
                   <Button className="w-full gap-2 h-12">
                     <ExternalLink className="w-4 h-4" />
                     View Original Certificate

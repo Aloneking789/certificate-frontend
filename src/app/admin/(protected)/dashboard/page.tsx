@@ -100,11 +100,11 @@ export default async function DashboardPage() {
                   {certificates.slice(0, 5).map((cert: any) => (
                     <TableRow key={cert.id} className="group">
                       <TableCell className="font-semibold text-primary">{cert.fullName || cert.studentName}</TableCell>
-                      <TableCell className="font-code text-xs text-muted-foreground">{cert.registrationNumber}</TableCell>
+                      <TableCell className="font-code text-xs text-muted-foreground">{cert.certificateNumber || cert.registrationNumber}</TableCell>
                       <TableCell>{cert.internshipDomain}</TableCell>
                       <TableCell className="text-sm text-muted-foreground">{new Date(cert.createdAt || cert.certificateIssueDate || cert.issueDate).toLocaleDateString()}</TableCell>
                       <TableCell className="text-right">
-                        <Link href={`/certificate/${cert.registrationNumber}`}>
+                        <Link href={`/certificate/${cert.certificateNumber || cert.registrationNumber}`}>
                           <Button variant="ghost" size="icon" className="group-hover:text-accent">
                             <Search className="w-4 h-4" />
                           </Button>
