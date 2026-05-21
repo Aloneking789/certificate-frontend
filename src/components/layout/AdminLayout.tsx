@@ -1,6 +1,6 @@
 "use client"
 import { SidebarProvider, Sidebar, SidebarContent, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarFooter, SidebarTrigger, SidebarInset } from '@/components/ui/sidebar';
-import { ShieldCheck, LayoutDashboard, FileText, PlusCircle, LogOut, Bell, User } from 'lucide-react';
+import { ShieldCheck, LayoutDashboard, FileText, PlusCircle, LogOut, Bell, User, Building, BookOpen } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -18,6 +18,8 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
   const menuItems = [
     { title: 'Dashboard', icon: LayoutDashboard, href: '/admin/dashboard' },
     { title: 'All Certificates', icon: FileText, href: '/admin/certificates' },
+    { title: 'Courses', icon: BookOpen, href: '/admin/courses' },
+    { title: 'Branches', icon: Building, href: '/admin/branches' },
     { title: 'Create New', icon: PlusCircle, href: '/admin/create' },
   ];
 
