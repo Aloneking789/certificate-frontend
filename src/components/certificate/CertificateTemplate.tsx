@@ -297,13 +297,15 @@ export function CertificateTemplate({ data }: { data: Certificate }) {
             }}>
               {/* QR Code */}
               <div className="qr-box" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-                <div style={{ padding: 6, border: '1.5px solid #d4b05a', borderRadius: 6, background: '#fff' }}>
-                  <QRCode
-                    value={`https://certificate-frontend-navy.vercel.app/certificate/${encodeURIComponent(data.certificateNumber || data.registrationNumber)}`}
-                    size={80}
-                  />
-                </div>
-                <span style={{ fontSize: 9, color: '#8a7240', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+                <a href="https://euonusit.com/" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+                  <div style={{ padding: 6, border: '1.5px solid #d4b05a', borderRadius: 6, background: '#fff' }}>
+                    <QRCode
+                      value={`https://certificate-frontend-navy.vercel.app/certificate/${encodeURIComponent(data.certificateNumber || data.registrationNumber)}`}
+                      size={80}
+                    />
+                  </div>
+                </a>
+                <span style={{ fontSize: 9, color: '#8a7240', letterSpacing: '0.12em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
                   Scan to Verify
                 </span>
               </div>
@@ -371,7 +373,7 @@ export function CertificateTemplate({ data }: { data: Certificate }) {
             </div>
 
             <div style={{ fontSize: 9, color: 'rgba(212,176,90,0.6)', letterSpacing: '0.15em', textTransform: 'uppercase', textAlign: 'right' }}>
-              Eunous IT<br />Pvt. Limited
+              Eunous IT Pvt. Limited
             </div>
           </div>
 

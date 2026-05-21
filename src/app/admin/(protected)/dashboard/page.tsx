@@ -104,11 +104,11 @@ export default async function DashboardPage() {
                       <TableCell>{cert.internshipDomain}</TableCell>
                       <TableCell className="text-sm text-muted-foreground">{new Date(cert.createdAt || cert.certificateIssueDate || cert.issueDate).toLocaleDateString()}</TableCell>
                       <TableCell className="text-right">
-                        <Link href={`/certificate/${cert.certificateNumber || cert.registrationNumber}`}>
+                        <a href={`http://localhost:9002/certificate/${cert.certificateNumber || cert.registrationNumber}`} target="_blank" rel="noopener noreferrer">
                           <Button variant="ghost" size="icon" className="group-hover:text-accent">
                             <Search className="w-4 h-4" />
                           </Button>
-                        </Link>
+                        </a>
                       </TableCell>
                     </TableRow>
                   ))}
