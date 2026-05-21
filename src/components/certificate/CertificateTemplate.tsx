@@ -93,19 +93,21 @@ export function CertificateTemplate({ data }: { data: Certificate }) {
             {/* Logo */}
             <div className="header-left" style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
               {logoUrl && (
-                <img
-                  src={logoUrl}
-                  alt="Logo"
-                  style={{
-                    width: 220,
-                    height: 'auto',
-                    objectFit: 'contain',
-                    background: '#fff',
-                    borderRadius: 6,
-                    padding: 4,
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
-                  }}
-                />
+                <a href="https://euonusit.com" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block' }}>
+                  <img
+                    src={logoUrl}
+                    alt="Logo"
+                    style={{
+                      width: 220,
+                      height: 'auto',
+                      objectFit: 'contain',
+                      background: '#fff',
+                      borderRadius: 6,
+                      padding: 4,
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
+                    }}
+                  />
+                </a>
               )}
               <div>
                 <div style={{ color: '#d4b05a', fontSize: 11, letterSpacing: '0.25em', textTransform: 'uppercase', fontFamily: 'Georgia, serif', marginBottom: 2 }}>
@@ -294,6 +296,8 @@ export function CertificateTemplate({ data }: { data: Certificate }) {
             <div className="footer-row" style={{
               display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between',
               position: 'relative', zIndex: 1,
+              // extra spacing between the footer row (QR/signature) and the bottom info strip
+              marginBottom: 28,
             }}>
               {/* QR Code */}
               <div className="qr-box" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
@@ -357,11 +361,13 @@ export function CertificateTemplate({ data }: { data: Certificate }) {
               padding: '10px 40px',
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
             }}>
-            <img
-              src={logoUrl}
-              alt="Logo"
-              style={{ width: 64, height: 'auto', objectFit: 'contain', background: '#fff', borderRadius: 4, padding: 3 }}
-            />
+            <a href="https://euonusit.com" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block' }}>
+              <img
+                src={logoUrl}
+                alt="Logo"
+                style={{ width: 64, height: 'auto', objectFit: 'contain', background: '#fff', borderRadius: 4, padding: 3 }}
+              />
+            </a>
 
             <div style={{ textAlign: 'center', flex: 1 }}>
               <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 9.5, letterSpacing: '0.1em', margin: 0 }}>
