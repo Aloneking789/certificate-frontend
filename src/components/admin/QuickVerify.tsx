@@ -99,7 +99,7 @@ export default function QuickVerify() {
                 <Badge variant="default" className={result.isVerified ? 'bg-emerald-100 text-emerald-700 h-8 px-3' : 'bg-destructive/10 text-destructive h-8 px-3'}>
                   {result.isVerified ? 'VALID' : 'INVALID'}
                 </Badge>
-                <a href={`http://localhost:9002/certificate/${result.registrationNumber}`} target="_blank" rel="noopener noreferrer">
+                <a href={`https://certificate-frontend-navy.vercel.app/certificate/${result.registrationNumber}`} target="_blank" rel="noopener noreferrer">
                   <Button variant="ghost" className="mt-2">View</Button>
                 </a>
               </div>

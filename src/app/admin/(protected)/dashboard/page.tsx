@@ -104,7 +104,7 @@ export default async function DashboardPage() {
                       <TableCell>{cert.internshipDomain}</TableCell>
                       <TableCell className="text-sm text-muted-foreground">{new Date(cert.createdAt || cert.certificateIssueDate || cert.issueDate).toLocaleDateString()}</TableCell>
                       <TableCell className="text-right">
-                        <a href={`http://localhost:9002/certificate/${cert.certificateNumber || cert.registrationNumber}`} target="_blank" rel="noopener noreferrer">
+                        <a href={`https://certificate-frontend-navy.vercel.app/certificate/${cert.certificateNumber || cert.registrationNumber}`} target="_blank" rel="noopener noreferrer">
                           <Button variant="ghost" size="icon" className="group-hover:text-accent">
                             <Search className="w-4 h-4" />
                           </Button>
