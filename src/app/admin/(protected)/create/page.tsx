@@ -103,10 +103,25 @@ export default function CreateCertificatePage() {
       }
 
       if (res.ok) {
-        const certNum = data?.certificate?.certificateNumber || data?.registrationNumber || data?.certificate?.registrationNumber || data?.data?.registrationNumber;
-        const display = certNum || `EUNOUS-REG-${Date.now()}`;
-        toast({ title: 'Certificate Generated', description: `Issued ${display}` });
-        router.push(`/certificate/${display}`);
+        // backend may return different shapes. Try a list of likely locations for an identifier
+        const certNum = data?.certificate?.certificateNumber
+          || data?.data?.certificateNumber
+          || data?.certificate?.registrationNumber
+          || data?.data?.registrationNumber
+          || data?.registrationNumber
+          || (data?.certificate?.id ? String(data.certificate.id) : undefined)
+          || (data?.data?.id ? String(data.data.id) : undefined)
+          || (data?.id ? String(data.id) : undefined);
+
+        if (certNum) {
+          toast({ title: 'Certificate Generated', description: `Issued ${certNum}` });
+          router.push(`/certificate/${encodeURIComponent(certNum)}`);
+        } else {
+          // No identifier returned; log response and send user to the registry where they can find the new entry
+          console.warn('Unexpected create response shape, no certificate id found:', data);
+          toast({ title: 'Created (no id)', description: 'Certificate created but server did not return an identifier. Opening registry.' });
+          router.push('/admin/certificates');
+        }
       } else {
         toast({ title: 'Creation Failed', description: data?.message || 'Unable to create certificate', variant: 'destructive' });
       }
