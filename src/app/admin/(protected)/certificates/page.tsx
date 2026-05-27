@@ -6,6 +6,9 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Search, Filter, Eye, Edit, Trash2, Download } from 'lucide-react';
 import Link from 'next/link';
 
@@ -13,6 +16,7 @@ export default function ManageCertificatesPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [certificates, setCertificates] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [editing, setEditing] = useState<any | null>(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const debounceRef = useRef<number | null>(null);
@@ -44,7 +48,22 @@ export default function ManageCertificatesPage() {
       }
       const json = await res.json();
       const data = json.data;
-      setCertificates(data?.items || []);
+      // sort items newest-first by common date fields
+      const items = (data?.items || []).slice();
+      items.sort((a: any, b: any) => {
+        const getTime = (c: any) => {
+          const candidates = [c?.certificateIssueDate, c?.issueDate, c?.createdAt, c?.created_at, c?.updatedAt, c?.updated_at];
+          for (const d of candidates) {
+            if (d) {
+              const t = Date.parse(d);
+              if (!Number.isNaN(t)) return t;
+            }
+          }
+          return 0;
+        };
+        return getTime(b) - getTime(a);
+      });
+      setCertificates(items || []);
       setPage(data?.page || 1);
       setTotalPages(data?.totalPages || 1);
     } catch (err) {
@@ -54,29 +73,77 @@ export default function ManageCertificatesPage() {
     }
   }
 
-  const handleEdit = async (cert: any) => {
-    const newHoursStr = window.prompt('Enter new total hours', String(cert.totalHours || ''));
-    if (newHoursStr === null) return;
-    const newHours = Number(newHoursStr);
-    if (Number.isNaN(newHours)) {
-      toast({ variant: 'destructive', title: 'Invalid input', description: 'Total hours must be a number' });
-      return;
-    }
+  const handleEdit = (cert: any) => {
+    const toInputDate = (d: any) => {
+      if (!d) return '';
+      try {
+        const dt = new Date(d);
+        if (Number.isNaN(dt.getTime())) return '';
+        return dt.toISOString().slice(0, 10);
+      } catch (e) {
+        return '';
+      }
+    };
 
-    const newPerf = window.prompt('Enter new performance', cert.performance || 'Very Good');
-    if (newPerf === null) return;
+    const pick = (obj: any, ...keys: string[]) => {
+      for (const k of keys) {
+        if (obj?.[k]) return obj[k];
+      }
+      return '';
+    };
 
+    setEditing({
+      id: cert.id,
+      fullName: cert.fullName || cert.studentName || '',
+      fatherName: cert.fatherName || '',
+      startDate: toInputDate(pick(cert, 'startDate', 'start_date', 'start')),
+      endDate: toInputDate(pick(cert, 'endDate', 'end_date', 'end')),
+      totalHours: cert.totalHours || 0,
+      performance: cert.performance || 'Very Good',
+      issueDate: toInputDate(pick(cert, 'issueDate', 'certificateIssueDate', 'certificate_issue_date')),
+    });
+  };
+
+  const submitEdit = async (payload: any) => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/certificates/${cert.id}`, {
+      // Build a minimal body: only include fields that were changed (non-empty and different)
+      const fields = ['fullName', 'fatherName', 'startDate', 'endDate', 'totalHours', 'performance', 'issueDate'];
+      const body: any = {};
+      for (const f of fields) {
+        const newVal = payload[f as keyof typeof payload];
+        const oldVal = (editing as any)?.[f];
+        if (f === 'totalHours') {
+          const newNum = Number(newVal || 0);
+          const oldNum = Number(oldVal || 0);
+          if (!Number.isNaN(newNum) && newNum !== oldNum) body[f] = newNum;
+        } else {
+          // include if non-empty and different from old value
+          if (typeof newVal === 'string') {
+            if (newVal.trim() !== '' && String(newVal) !== String(oldVal)) body[f] = newVal;
+          } else if (newVal != null && String(newVal) !== String(oldVal)) {
+            body[f] = newVal;
+          }
+        }
+      }
+
+      if (Object.keys(body).length === 0) {
+        toast({ title: 'No changes', description: 'No fields were changed.' });
+        setEditing(null);
+        setLoading(false);
+        return;
+      }
+
+      const res = await fetch(`/api/certificates/${payload.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ totalHours: newHours, performance: newPerf }),
+        body: JSON.stringify(body),
       });
       const data = await res.json();
       if (res.ok && data?.success) {
         toast({ title: 'Updated', description: 'Certificate updated successfully.' });
         fetchCerts(searchTerm, page);
+        setEditing(null);
       } else {
         toast({ variant: 'destructive', title: 'Update failed', description: data?.message || 'Unable to update certificate' });
       }
@@ -109,6 +176,78 @@ export default function ManageCertificatesPage() {
   return (
     <AdminLayout>
       <div className="space-y-8">
+        {/* Edit modal */}
+        <Dialog open={Boolean(editing)} onOpenChange={(open) => { if (!open) setEditing(null); }}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit Certificate</DialogTitle>
+            </DialogHeader>
+
+            {editing && (
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  const form = e.target as HTMLFormElement;
+                  const formData = new FormData(form);
+                  const payload = {
+                    id: editing.id,
+                    fullName: String(formData.get('fullName') || ''),
+                    fatherName: String(formData.get('fatherName') || ''),
+                    startDate: String(formData.get('startDate') || ''),
+                    endDate: String(formData.get('endDate') || ''),
+                    totalHours: Number(formData.get('totalHours') || 0),
+                    performance: String(formData.get('performance') || ''),
+                    issueDate: String(formData.get('issueDate') || ''),
+                  };
+                  await submitEdit(payload);
+                }}
+              >
+                <div className="grid gap-2">
+                  <div>
+                    <Label>Full Name</Label>
+                    <Input name="fullName" defaultValue={editing.fullName} />
+                  </div>
+                  <div>
+                    <Label>Father's Name</Label>
+                    <Input name="fatherName" defaultValue={editing.fatherName} />
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <Label>Start Date</Label>
+                      <Input name="startDate" type="date" defaultValue={editing.startDate} />
+                    </div>
+                    <div>
+                      <Label>End Date</Label>
+                      <Input name="endDate" type="date" defaultValue={editing.endDate} />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label>Total Hours</Label>
+                    <Input name="totalHours" type="number" defaultValue={String(editing.totalHours || 0)} />
+                  </div>
+
+                  <div>
+                    <Label>Performance</Label>
+                    <Input name="performance" defaultValue={editing.performance} />
+                  </div>
+
+                  <div>
+                    <Label>Issue Date</Label>
+                    <Input name="issueDate" type="date" defaultValue={editing.issueDate} />
+                  </div>
+
+                  <DialogFooter className="pt-4">
+                    <div className="flex gap-2 justify-end">
+                      <Button type="button" variant="outline" onClick={() => setEditing(null)} disabled={loading}>Cancel</Button>
+                      <Button type="submit" disabled={loading}>{loading ? 'Saving...' : 'Save'}</Button>
+                    </div>
+                  </DialogFooter>
+                </div>
+              </form>
+            )}
+          </DialogContent>
+        </Dialog>
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <h1 className="text-3xl font-headline font-bold text-primary">Certificate Registry</h1>
@@ -166,9 +305,6 @@ export default function ManageCertificatesPage() {
                               <Eye className="w-4 h-4" />
                             </Button>
                           </Link>
-                          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-accent">
-                            <Edit className="w-4 h-4" />
-                          </Button>
                           <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-accent" onClick={() => handleEdit(cert)}>
                             <Edit className="w-4 h-4" />
                           </Button>
@@ -193,6 +329,40 @@ export default function ManageCertificatesPage() {
               </TableBody>
             </Table>
           </CardContent>
+          {/* Pagination controls */}
+          <div className="flex items-center justify-between px-6 py-4 border-t">
+            <div className="text-sm text-muted-foreground">Page {page} of {totalPages}</div>
+            <div className="flex items-center gap-2">
+              <Button size="sm" variant="ghost" disabled={page <= 1} onClick={() => fetchCerts(searchTerm, page - 1)}>Prev</Button>
+
+              {/* page numbers window */}
+              {(() => {
+                const pages = [] as number[];
+                const maxButtons = 7;
+                let start = Math.max(1, page - Math.floor(maxButtons / 2));
+                let end = start + maxButtons - 1;
+                if (end > totalPages) { end = totalPages; start = Math.max(1, end - maxButtons + 1); }
+                for (let p = start; p <= end; p++) pages.push(p);
+                return (
+                  <div className="inline-flex items-center gap-1">
+                    {start > 1 && (
+                      <Button size="sm" variant="ghost" onClick={() => fetchCerts(searchTerm, 1)}>1</Button>
+                    )}
+                    {start > 2 && <div className="px-2">…</div>}
+                    {pages.map(p => (
+                      <Button key={p} size="sm" variant={p === page ? 'default' : 'ghost'} onClick={() => fetchCerts(searchTerm, p)}>{p}</Button>
+                    ))}
+                    {end < totalPages - 1 && <div className="px-2">…</div>}
+                    {end < totalPages && (
+                      <Button size="sm" variant="ghost" onClick={() => fetchCerts(searchTerm, totalPages)}>{totalPages}</Button>
+                    )}
+                  </div>
+                );
+              })()}
+
+              <Button size="sm" variant="ghost" disabled={page >= totalPages} onClick={() => fetchCerts(searchTerm, page + 1)}>Next</Button>
+            </div>
+          </div>
         </Card>
       </div>
     </AdminLayout>

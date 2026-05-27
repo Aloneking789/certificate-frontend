@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Printer, Download, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { Navbar } from '@/components/layout/Navbar';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 export default function CertificatePreviewPage() {
   const params = useParams();
@@ -63,7 +63,45 @@ export default function CertificatePreviewPage() {
   }, [certParam]);
 
   const handlePrint = () => {
-    window.print();
+    try {
+      const rawName = (certificate?.studentName || certificate?.certificateNumber || certificate?.registrationNumber || 'certificate').toString();
+      const safeName = rawName.replace(/[^a-z0-9-_\.]/gi, '_');
+      const prevTitle = document.title;
+      document.title = safeName;
+      // Some browsers capture document.title when print dialog opens. Restore after short delay.
+      window.print();
+      setTimeout(() => { document.title = prevTitle; }, 1000);
+    } catch (e) {
+      window.print();
+    }
+  };
+
+  const certRef = useRef<HTMLDivElement | null>(null);
+
+  const downloadPdf = async () => {
+    const el = certRef.current;
+    if (!el) return handlePrint();
+    try {
+      const html2canvas = (await import('html2canvas')).default;
+      const { jsPDF } = await import('jspdf');
+
+      const canvas = await html2canvas(el, { scale: 2, useCORS: true, logging: false });
+      const imgData = canvas.toDataURL('image/png');
+
+      const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const imgProps = (pdf as any).getImageProperties(imgData);
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+
+      const rawName = (certificate?.studentName || certificate?.certificateNumber || certificate?.registrationNumber || 'certificate').toString();
+      const safeName = rawName.replace(/[^a-z0-9-_\.]/gi, '_');
+      pdf.save(`${safeName}.pdf`);
+    } catch (err) {
+      // If dynamic import fails (packages not installed), fall back to print
+      console.warn('html2canvas/jspdf not available, falling back to print', err);
+      handlePrint();
+    }
   };
 
   if (loading) return (
@@ -99,14 +137,14 @@ export default function CertificatePreviewPage() {
             <Printer className="w-4 h-4" />
             Print Certificate
           </Button>
-          <Button className="gap-2 bg-primary" onClick={handlePrint}>
+          <Button className="gap-2 bg-primary" onClick={downloadPdf}>
             <Download className="w-4 h-4" />
             Download PDF
           </Button>
         </div>
       </div>
 
-      <div className="shadow-2xl no-print mb-12">
+      <div className="shadow-2xl no-print mb-12" ref={certRef}>
         <CertificateTemplate data={certificate} />
       </div>
 
