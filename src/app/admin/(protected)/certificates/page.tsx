@@ -300,11 +300,11 @@ export default function ManageCertificatesPage() {
                       <TableCell className="text-sm">{new Date(cert.certificateIssueDate || cert.createdAt || cert.issueDate).toLocaleDateString()}</TableCell>
                       <TableCell className="text-right pr-6">
                         <div className="flex justify-end gap-2">
-                          <Link href={`/certificate/${cert.certificateNumber || cert.registrationNumber}`}>
+                          <a href={`${process.env.NEXT_PUBLIC_CERT_BASE || 'https://certificate.euonusit.com'}/certificate/${cert.certificateNumber || cert.registrationNumber}`} target="_blank" rel="noopener noreferrer">
                             <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary">
                               <Eye className="w-4 h-4" />
                             </Button>
-                          </Link>
+                          </a>
                           <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-accent" onClick={() => handleEdit(cert)}>
                             <Edit className="w-4 h-4" />
                           </Button>
