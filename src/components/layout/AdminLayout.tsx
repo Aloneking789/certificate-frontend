@@ -3,11 +3,22 @@ import { SidebarProvider, Sidebar, SidebarContent, SidebarHeader, SidebarMenu, S
 import { ShieldCheck, LayoutDashboard, FileText, PlusCircle, LogOut, Bell, User, Building, BookOpen } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+
+  useEffect(() => {
+    try {
+      const match = document.cookie.match(/certiflow_token=([^;]+)/);
+      if (match && match[1]) setIsAdminLoggedIn(true);
+    } catch (e) {
+      // ignore
+    }
+  }, []);
 
   const handleLogout = () => {
     fetch('/api/auth/logout', { method: 'POST' }).then(() => {
@@ -27,12 +38,21 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
     <SidebarProvider>
       <Sidebar collapsible="icon" className="border-r border-white/10">
         <SidebarHeader className="p-4">
-          <Link href="/" className="flex items-center gap-2 px-2 overflow-hidden">
-            <ShieldCheck className="w-8 h-8 text-accent shrink-0" />
-            <span className="font-headline font-bold text-xl text-white whitespace-nowrap group-data-[collapsible=icon]:hidden">
-              Certi<span className="text-accent">Flow</span>
-            </span>
-          </Link>
+          {isAdminLoggedIn ? (
+            <div className="flex items-center gap-2 px-2 overflow-hidden">
+              <ShieldCheck className="w-8 h-8 text-accent shrink-0" />
+              <span className="font-headline font-bold text-xl text-white whitespace-nowrap group-data-[collapsible=icon]:hidden">
+                Certi<span className="text-accent">Flow</span>
+              </span>
+            </div>
+          ) : (
+            <Link href="/" className="flex items-center gap-2 px-2 overflow-hidden">
+              <ShieldCheck className="w-8 h-8 text-accent shrink-0" />
+              <span className="font-headline font-bold text-xl text-white whitespace-nowrap group-data-[collapsible=icon]:hidden">
+                Certi<span className="text-accent">Flow</span>
+              </span>
+            </Link>
+          )}
         </SidebarHeader>
         <SidebarContent className="p-2 pt-8">
           <SidebarMenu>

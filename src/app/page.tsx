@@ -2,6 +2,8 @@
 "use client"
 import Link from 'next/link';
 import Image from 'next/image';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Navbar } from '@/components/layout/Navbar';
 import { 
@@ -29,6 +31,20 @@ import {
 import { Card, CardContent } from '@/components/ui/card';
 
 export default function Home() {
+  const router = useRouter();
+
+  useEffect(() => {
+    try {
+      const match = document.cookie.match(/certiflow_token=([^;]+)/);
+      if (match && match[1]) {
+        // If admin token exists, send user to admin dashboard instead of public homepage
+        router.replace('/admin/dashboard');
+      }
+    } catch (e) {
+      // ignore
+    }
+  }, [router]);
+
   const heroImg = PlaceHolderImages.find(img => img.id === 'hero-bg')?.imageUrl;
   const studentImg = "https://plus.unsplash.com/premium_photo-1661751188825-710ec341b907?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
   const securityImg = PlaceHolderImages.find(img => img.id === 'security-tech')?.imageUrl;
@@ -323,7 +339,7 @@ export default function Home() {
             <div>
               <h4 className="font-bold text-xl mb-6">Contact</h4>
               <ul className="space-y-4 text-white/60">
-                <li>info@eunousit.com</li>
+                <li>info@euonusit.com</li>
                 <li>Support Center</li>
                 <li>Documentation</li>
                 <li>Privacy Policy</li>

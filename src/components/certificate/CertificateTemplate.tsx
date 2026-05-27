@@ -301,7 +301,7 @@ export function CertificateTemplate({ data }: { data: Certificate }) {
             }}>
               {/* QR Code */}
               <div className="qr-box" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-                <a href="https://euonusit.com/" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+                <a href="euonusit.com" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
                   <div style={{ padding: 6, border: '1.5px solid #d4b05a', borderRadius: 6, background: '#fff' }}>
                     <QRCode
                       value={`https://certificate-frontend-navy.vercel.app/certificate/${encodeURIComponent(data.certificateNumber || data.registrationNumber)}`}
@@ -374,7 +374,7 @@ export function CertificateTemplate({ data }: { data: Certificate }) {
                 Plot No 4, Devinagar, New Saganer Road, Jaipur – 302019
               </p>
               <p style={{ color: 'rgba(212,176,90,0.8)', fontSize: 9.5, letterSpacing: '0.1em', margin: '3px 0 0' }}>
-                info@euonusit.com &nbsp;·&nbsp; eunousit.com
+                info@euonusit.com &nbsp;·&nbsp; euonusit.com
               </p>
             </div>
 

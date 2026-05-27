@@ -86,7 +86,7 @@ export default function LoginPage() {
                     <Input 
                       id="email" 
                       type="email" 
-                      placeholder="admin@eunousit.com" 
+                      placeholder="admin@euonusit.com" 
                       className="pl-10"
                       value={form.email}
                       onChange={(e) => setForm({ ...form, email: e.target.value })}
