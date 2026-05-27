@@ -335,7 +335,7 @@ export function CertificateTemplate({ data }: { data: Certificate }) {
                 <a href="euonusit.com" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
                   <div style={{ padding: 6, border: '1.5px solid #d4b05a', borderRadius: 6, background: '#fff' }}>
                     <QRCode
-                      value={`https://certificate-frontend-navy.vercel.app/certificate/${encodeURIComponent(data.certificateNumber || data.registrationNumber)}`}
+                      value={`${process.env.NEXT_PUBLIC_CERT_BASE || 'https://certificate.euonusit.com'}/certificate/${encodeURIComponent(data.certificateNumber || data.registrationNumber)}`}
                       size={80}
                     />
                   </div>
