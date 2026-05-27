@@ -16,7 +16,7 @@ export default function BranchesPage() {
 
   useEffect(() => {
     let mounted = true;
-    (async function fetchBranches() {
+    (async function fetch() {
       setLoading(true);
       try {
         const res = await fetch('/api/branches');

@@ -14,6 +14,37 @@ export function CertificateTemplate({ data }: { data: Certificate }) {
   const logoUrl: string = typeof logo === 'string' ? logo : (logo as StaticImageData).src;
   const signatureUrl: string = typeof signature === 'string' ? signature : (signature as StaticImageData).src;
 
+  const formatDate = (d: any) => {
+    if (!d) return '';
+    // if already in DD/MM or similar, try to parse; prefer ISO-safe parsing
+    try {
+      const dt = new Date(d);
+      if (!isNaN(dt.getTime())) {
+        const dd = String(dt.getDate()).padStart(2, '0');
+        const mm = String(dt.getMonth() + 1).padStart(2, '0');
+        const yyyy = String(dt.getFullYear());
+        return `${dd}/${mm}/${yyyy}`;
+      }
+    } catch (e) {
+      // fallthrough
+    }
+    // fallback: try to split common separators (MM-DD-YYYY or MM/DD/YY)
+    const s = String(d);
+    const parts = s.split(/[-\/]/);
+    if (parts.length >= 3) {
+      // assume parts[0]=MM, parts[1]=DD, parts[2]=YY or YYYY
+      const mm = parts[0].padStart(2, '0');
+      const dd = parts[1].padStart(2, '0');
+      let yy = parts[2];
+      if (yy.length === 2) {
+        // two-digit year -> prefix 20
+        yy = '20' + yy;
+      }
+      return `${dd}/${mm}/${yy}`;
+    }
+    return s;
+  };
+
   return (
     <div
       className="cert-root relative w-full max-w-[1120px] mx-auto print:m-0"
@@ -267,8 +298,8 @@ export function CertificateTemplate({ data }: { data: Certificate }) {
               background: 'linear-gradient(to bottom, #fffdf5, #fff)',
               position: 'relative', zIndex: 1,
             }}>
-              {[
-                { label: 'Duration', value: `${data.startDate} — ${data.endDate}` },
+                {[
+                { label: 'Duration', value: `${formatDate(data.startDate)} — ${formatDate(data.endDate)}` },
                 null,
                 { label: 'Total Hours', value: `${data.totalHours} Hours` },
                 null,
@@ -284,9 +315,9 @@ export function CertificateTemplate({ data }: { data: Certificate }) {
                     }}>
                       {item.label}
                     </div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: '#0a2342', fontFamily: 'Georgia, serif' }}>
-                      {item.value}
-                    </div>
+                        <div style={{ fontSize: 14, fontWeight: 700, color: '#0a2342', fontFamily: 'Georgia, serif' }}>
+                          {item.value}
+                        </div>
                   </div>
                 )
               )}
@@ -320,7 +351,7 @@ export function CertificateTemplate({ data }: { data: Certificate }) {
                   Date of Issue
                 </div>
                 <div style={{ fontSize: 14, fontWeight: 700, color: '#0a2342', fontFamily: 'Georgia, serif' }}>
-                  {data.issueDate}
+                  {formatDate(data.issueDate)}
                 </div>
 
                 {/* Bottom ornament */}

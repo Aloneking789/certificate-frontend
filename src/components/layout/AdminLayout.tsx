@@ -30,7 +30,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
     { title: 'Dashboard', icon: LayoutDashboard, href: '/admin/dashboard' },
     { title: 'All Certificates', icon: FileText, href: '/admin/certificates' },
     { title: 'Courses', icon: BookOpen, href: '/admin/courses' },
-    { title: 'Branches', icon: Building, href: '/admin/branches' },
+    { title: 'Intership Domain', icon: Building, href: '/admin/branches' },
     { title: 'Create New', icon: PlusCircle, href: '/admin/create' },
   ];
 
