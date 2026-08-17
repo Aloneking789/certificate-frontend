@@ -106,7 +106,7 @@ export default function Home() {
                   <span className="text-accent underline decoration-accent/20 underline-offset-8">Verify</span>
                 </h1>
                 <p className="text-xl text-muted-foreground max-w-xl mx-auto lg:mx-0 leading-relaxed animate-in fade-in slide-in-from-bottom-8 duration-1000">
-                  Eunous CertiFlow provides a high-security, professional ecosystem for issuing and authenticating internship achievements with absolute confidence.
+                  Euonus CertiFlow provides a high-security, professional ecosystem for issuing and authenticating internship achievements with absolute confidence.
                 </p>
                 <div className="flex flex-wrap justify-center lg:justify-start gap-4 animate-in fade-in slide-in-from-bottom-10 duration-1000">
                   <Link href="/verify">
@@ -144,7 +144,7 @@ export default function Home() {
                         </div>
                         <div>
                           <p className="font-bold text-primary">Credential Verified</p>
-                          <p className="text-sm text-muted-foreground">EUNOUS-REG-2026-8812</p>
+                          <p className="text-sm text-muted-foreground">Euonus-REG-2026-8812</p>
                         </div>
                       </div>
                     </div>
@@ -320,7 +320,7 @@ export default function Home() {
               <div className="flex items-center gap-2">
                 <ShieldCheck className="w-10 h-10 text-accent" />
                 <span className="font-headline font-bold text-3xl tracking-tight">
-                  Eunous <span className="text-accent">CertiFlow</span>
+                  Euonus <span className="text-accent">CertiFlow</span>
                 </span>
               </div>
               <p className="text-white/60 text-lg max-w-sm">
@@ -347,7 +347,7 @@ export default function Home() {
             </div>
           </div>
           <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-white/60">
-            <p>© 2026 Eunous IT Private Limited. All rights reserved.</p>
+            <p>© 2026 Euonus IT Private Limited. All rights reserved.</p>
             <div className="flex gap-8">
               <span>Terms of Service</span>
               <span>Cookie Policy</span>

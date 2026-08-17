@@ -16,31 +16,53 @@ export function CertificateTemplate({ data }: { data: Certificate }) {
 
   const formatDate = (d: any) => {
     if (!d) return '';
-    // if already in DD/MM or similar, try to parse; prefer ISO-safe parsing
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const s = String(d).trim();
+    if (!s) return '';
+
+    // ISO format YYYY-MM-DD or YYYY-MM-DDTHH:mm:ss
+    const isoMatch = s.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})/);
+    if (isoMatch) {
+      const year = isoMatch[1];
+      const monthIdx = parseInt(isoMatch[2], 10) - 1;
+      const day = String(parseInt(isoMatch[3], 10)).padStart(2, '0');
+      if (monthIdx >= 0 && monthIdx < 12) {
+        return `${day},${months[monthIdx]} ${year}`;
+      }
+    }
+
     try {
-      const dt = new Date(d);
+      const dt = new Date(s);
       if (!isNaN(dt.getTime())) {
-        const dd = String(dt.getDate()).padStart(2, '0');
-        const mm = String(dt.getMonth() + 1).padStart(2, '0');
-        const yyyy = String(dt.getFullYear());
-        return `${dd}/${mm}/${yyyy}`;
+        const day = String(dt.getDate()).padStart(2, '0');
+        const monthStr = months[dt.getMonth()];
+        const year = dt.getFullYear();
+        return `${day},${monthStr} ${year}`;
       }
     } catch (e) {
       // fallthrough
     }
-    // fallback: try to split common separators (MM-DD-YYYY or MM/DD/YY)
-    const s = String(d);
+
+    // Fallback parsing for MM/DD/YYYY or DD/MM/YYYY
     const parts = s.split(/[-\/]/);
     if (parts.length >= 3) {
-      // assume parts[0]=MM, parts[1]=DD, parts[2]=YY or YYYY
-      const mm = parts[0].padStart(2, '0');
-      const dd = parts[1].padStart(2, '0');
-      let yy = parts[2];
-      if (yy.length === 2) {
-        // two-digit year -> prefix 20
-        yy = '20' + yy;
+      let part1 = parseInt(parts[0], 10);
+      let part2 = parseInt(parts[1], 10);
+      let year = parts[2];
+      if (year.length === 2) year = '20' + year;
+
+      let day = part1;
+      let monthIdx = part2 - 1;
+
+      if (part1 <= 12 && part2 > 12) {
+        monthIdx = part1 - 1;
+        day = part2;
       }
-      return `${dd}/${mm}/${yy}`;
+
+      if (monthIdx >= 0 && monthIdx < 12) {
+        const dayStr = String(day).padStart(2, '0');
+        return `${dayStr},${months[monthIdx]} ${year}`;
+      }
     }
     return s;
   };
@@ -142,7 +164,7 @@ export function CertificateTemplate({ data }: { data: Certificate }) {
               )}
               <div>
                 <div style={{ color: '#d4b05a', fontSize: 11, letterSpacing: '0.25em', textTransform: 'uppercase', fontFamily: 'Georgia, serif', marginBottom: 2 }}>
-                  Eunous IT Pvt. Limited
+                  Euonus IT Pvt. Limited
                 </div>
                 <div style={{ color: 'rgba(255,255,255,0.55)', fontSize: 9.5, letterSpacing: '0.15em', textTransform: 'uppercase', fontFamily: 'Georgia, serif' }}>
                   Training & Certification Division
@@ -225,13 +247,6 @@ export function CertificateTemplate({ data }: { data: Certificate }) {
                 <div style={{ height: 1, flex: 1, maxWidth: 140, background: 'linear-gradient(to left, transparent, #b8973a)' }} />
               </div>
 
-              <div style={{
-                fontSize: 10.5, letterSpacing: '0.4em', textTransform: 'uppercase',
-                color: '#8a7240', fontFamily: 'Georgia, serif', marginBottom: 10,
-              }}>
-                This Certificate is Proudly Presented To
-              </div>
-
               <h2 style={{
                 fontSize: 34, fontFamily: 'Georgia, serif', fontWeight: 700,
                 color: '#0a2342', letterSpacing: '0.05em', textTransform: 'uppercase',
@@ -275,7 +290,7 @@ export function CertificateTemplate({ data }: { data: Certificate }) {
                 lineHeight: 1.75, color: '#444c5c',
                 fontFamily: 'Georgia, serif',
               }}>
-                {(data.gender === 'Female') ? 'Daughter' : 'Son'} of{' '}
+                {(data.gender && ['female', 'f'].includes(String(data.gender).trim().toLowerCase())) ? 'Daughter' : 'Son'} of{' '}
                 <strong style={{ color: '#0a2342' }}>{`Mr. ${data.fatherName}`}</strong>,
                 a student of{' '}
                 <strong style={{ color: '#0a2342' }}>
@@ -298,7 +313,7 @@ export function CertificateTemplate({ data }: { data: Certificate }) {
               background: 'linear-gradient(to bottom, #fffdf5, #fff)',
               position: 'relative', zIndex: 1,
             }}>
-                {[
+              {[
                 { label: 'Duration', value: `${formatDate(data.startDate)} — ${formatDate(data.endDate)}` },
                 null,
                 { label: 'Total Hours', value: `${data.totalHours} Hours` },
@@ -315,9 +330,9 @@ export function CertificateTemplate({ data }: { data: Certificate }) {
                     }}>
                       {item.label}
                     </div>
-                        <div style={{ fontSize: 14, fontWeight: 700, color: '#0a2342', fontFamily: 'Georgia, serif' }}>
-                          {item.value}
-                        </div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: '#0a2342', fontFamily: 'Georgia, serif' }}>
+                      {item.value}
+                    </div>
                   </div>
                 )
               )}
@@ -402,7 +417,7 @@ export function CertificateTemplate({ data }: { data: Certificate }) {
 
             <div style={{ textAlign: 'center', flex: 1 }}>
               <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 9.5, letterSpacing: '0.1em', margin: 0 }}>
-                Plot No 4, Devinagar, New Saganer Road, Jaipur – 302019
+                Plot No 4, Devinagar, New Sanganer Road, Jaipur – 302019
               </p>
               <p style={{ color: 'rgba(212,176,90,0.8)', fontSize: 9.5, letterSpacing: '0.1em', margin: '3px 0 0' }}>
                 info@euonusit.com &nbsp;·&nbsp; euonusit.com
@@ -410,7 +425,7 @@ export function CertificateTemplate({ data }: { data: Certificate }) {
             </div>
 
             <div style={{ fontSize: 9, color: 'rgba(212,176,90,0.6)', letterSpacing: '0.15em', textTransform: 'uppercase', textAlign: 'right' }}>
-              Eunous IT Pvt. Limited
+              Euonus IT Pvt. Limited
             </div>
           </div>
 

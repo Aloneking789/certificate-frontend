@@ -28,7 +28,7 @@ export default function CreateCertificatePage() {
     endDate: '',
     totalHours: '',
     performance: 'Excellent' as const,
-    authorizedSignatory: 'Director, Eunous IT',
+    authorizedSignatory: 'Director',
     gender: 'Male',
     studentRoll: '',
     issueDate: new Date().toISOString().split('T')[0],
@@ -280,7 +280,7 @@ export default function CreateCertificatePage() {
               {loading ? 'Generating...' : 'Issue Certificate'}
             </Button>
             <Button size="lg" variant="outline" className="h-14 text-lg font-bold gap-2" type="reset" onClick={() => setForm({
-              studentName: '', fatherName: '', courseName: 'B.Tech', collegeName: '', branch: '', semester: '1st', internshipDomain: '', startDate: '', endDate: '', totalHours: '', performance: 'Excellent', authorizedSignatory: 'Director, Eunous IT', gender: 'Male', studentRoll: '', issueDate: new Date().toISOString().split('T')[0]
+              studentName: '', fatherName: '', courseName: 'B.Tech', collegeName: '', branch: '', semester: '1st', internshipDomain: '', startDate: '', endDate: '', totalHours: '', performance: 'Excellent', authorizedSignatory: 'Director', gender: 'Male', studentRoll: '', issueDate: new Date().toISOString().split('T')[0]
             })}>
               <RotateCcw className="w-5 h-5" />
               Reset Form

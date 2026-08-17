@@ -1,5 +1,5 @@
 "use client"
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -14,6 +14,30 @@ export default function LoginPage() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ email: '', password: '' });
+
+  useEffect(() => {
+    const check = () => {
+      try {
+        const match = document.cookie.match(/certiflow_token=([^;]+)/);
+        if (match && match[1]) {
+          // already logged in -> go to dashboard
+          router.replace('/admin/dashboard');
+        }
+      } catch (e) {
+        // ignore
+      }
+    };
+
+    check();
+    const onPageShow = () => check();
+    const onVisibility = () => { if (document.visibilityState === 'visible') check(); };
+    window.addEventListener('pageshow', onPageShow);
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => {
+      window.removeEventListener('pageshow', onPageShow);
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
+  }, [router]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,7 +79,7 @@ export default function LoginPage() {
         <div className="relative z-10">
           <Link href="/" className="flex items-center gap-2 mb-12">
             <ShieldCheck className="w-8 h-8 text-accent" />
-            <span className="font-headline font-bold text-2xl tracking-tight">Eunous <span className="text-accent">CertiFlow</span></span>
+            <span className="font-headline font-bold text-2xl tracking-tight">Euonus <span className="text-accent">CertiFlow</span></span>
           </Link>
           <h1 className="text-5xl font-headline font-bold mb-6">Secure Command Center</h1>
           <p className="text-xl text-white/70 max-w-md">Manage your internship credentials with high security and AI-powered auditing tools.</p>

@@ -23,8 +23,8 @@ export interface Certificate {
 const certificates: Certificate[] = [
   {
     id: '1',
-  registrationNumber: 'EUNOUS-REG-2026-0001',
-  certificateNumber: 'CERT-2026-0001',
+    registrationNumber: 'Euonus-REG-2026-0001',
+    certificateNumber: 'CERT-2026-0001',
     studentName: 'Aarav Sharma',
     gender: 'Male',
     fatherName: 'Rajesh Sharma',
@@ -38,13 +38,13 @@ const certificates: Certificate[] = [
     totalHours: 320,
     performance: 'Excellent',
     issueDate: '2026-03-20',
-    authorizedSignatory: 'Director, Eunous IT',
+    authorizedSignatory: 'Director',
     status: 'valid'
   },
   {
     id: '2',
-  registrationNumber: 'EUNOUS-REG-2026-0002',
-  certificateNumber: 'CERT-2026-0002',
+    registrationNumber: 'Euonus-REG-2026-0002',
+    certificateNumber: 'CERT-2026-0002',
     studentName: 'Priya Verma',
     gender: 'Female',
     fatherName: 'Amit Verma',
@@ -58,7 +58,7 @@ const certificates: Certificate[] = [
     totalHours: 240,
     performance: 'Very Good',
     issueDate: '2026-04-05',
-    authorizedSignatory: 'Director, Eunous IT',
+    authorizedSignatory: 'Director',
     status: 'valid'
   }
 ];

@@ -3,8 +3,8 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
-  title: 'Eunous CertiFlow - Internship Certificate Verification',
-  description: 'Modern certificate verification and generation system for Eunous IT.',
+  title: 'Euonus CertiFlow - Internship Certificate Verification',
+  description: 'Modern certificate verification and generation system for Euonus IT.',
 };
 
 export default function RootLayout({

@@ -23,7 +23,7 @@ export function Navbar() {
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <a href="https://euonusit.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4">
           <div className="w-24 h-14 relative rounded-md overflow-hidden">
-            <Image src={logo} alt="Eunous IT" fill className="object-contain" />
+            <Image src={logo} alt="Euonus IT" fill className="object-contain" />
           </div>
           <span className="font-headline font-bold text-xl tracking-tight text-primary">
             <span className="text-accent">CertiFlow</span>

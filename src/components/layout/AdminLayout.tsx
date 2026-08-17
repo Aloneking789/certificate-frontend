@@ -38,21 +38,13 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
     <SidebarProvider>
       <Sidebar collapsible="icon" className="border-r border-white/10">
         <SidebarHeader className="p-4">
-          {isAdminLoggedIn ? (
-            <div className="flex items-center gap-2 px-2 overflow-hidden">
-              <ShieldCheck className="w-8 h-8 text-accent shrink-0" />
-              <span className="font-headline font-bold text-xl text-white whitespace-nowrap group-data-[collapsible=icon]:hidden">
-                Certi<span className="text-accent">Flow</span>
-              </span>
-            </div>
-          ) : (
-            <Link href="/" className="flex items-center gap-2 px-2 overflow-hidden">
-              <ShieldCheck className="w-8 h-8 text-accent shrink-0" />
-              <span className="font-headline font-bold text-xl text-white whitespace-nowrap group-data-[collapsible=icon]:hidden">
-                Certi<span className="text-accent">Flow</span>
-              </span>
-            </Link>
-          )}
+          {/* Always allow returning to the public site via the logo */}
+          <Link href="/" className="flex items-center gap-2 px-2 overflow-hidden">
+            <ShieldCheck className="w-8 h-8 text-accent shrink-0" />
+            <span className="font-headline font-bold text-xl text-white whitespace-nowrap group-data-[collapsible=icon]:hidden">
+              Certi<span className="text-accent">Flow</span>
+            </span>
+          </Link>
         </SidebarHeader>
         <SidebarContent className="p-2 pt-8">
           <SidebarMenu>
@@ -90,6 +82,9 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
             </h2>
           </div>
           <div className="flex items-center gap-4">
+            <a href="/" className="hidden md:inline-flex">
+              <Button variant="ghost" size="sm">Visit site</Button>
+            </a>
             <Button variant="ghost" size="icon" className="relative">
               <Bell className="w-5 h-5" />
               <span className="absolute top-2 right-2 w-2 h-2 bg-accent rounded-full border-2 border-white" />
