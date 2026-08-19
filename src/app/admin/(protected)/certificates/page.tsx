@@ -96,6 +96,7 @@ export default function ManageCertificatesPage() {
       id: cert.id,
       fullName: cert.fullName || cert.studentName || '',
       fatherName: cert.fatherName || '',
+      semester: cert.semester || '',
       startDate: toInputDate(pick(cert, 'startDate', 'start_date', 'start')),
       endDate: toInputDate(pick(cert, 'endDate', 'end_date', 'end')),
       totalHours: cert.totalHours || 0,
@@ -108,7 +109,7 @@ export default function ManageCertificatesPage() {
     setLoading(true);
     try {
       // Build a minimal body: only include fields that were changed (non-empty and different)
-      const fields = ['fullName', 'fatherName', 'startDate', 'endDate', 'totalHours', 'performance', 'issueDate'];
+      const fields = ['fullName', 'fatherName', 'semester', 'startDate', 'endDate', 'totalHours', 'performance', 'issueDate'];
       const body: any = {};
       for (const f of fields) {
         const newVal = payload[f as keyof typeof payload];
@@ -193,6 +194,7 @@ export default function ManageCertificatesPage() {
                     id: editing.id,
                     fullName: String(formData.get('fullName') || ''),
                     fatherName: String(formData.get('fatherName') || ''),
+                    semester: String(formData.get('semester') || ''),
                     startDate: String(formData.get('startDate') || ''),
                     endDate: String(formData.get('endDate') || ''),
                     totalHours: Number(formData.get('totalHours') || 0),
@@ -210,6 +212,10 @@ export default function ManageCertificatesPage() {
                   <div>
                     <Label>Father's Name</Label>
                     <Input name="fatherName" defaultValue={editing.fatherName} />
+                  </div>
+                  <div>
+                    <Label>Semester</Label>
+                    <Input name="semester" defaultValue={editing.semester} placeholder="e.g. 7th" />
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     <div>

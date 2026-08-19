@@ -27,7 +27,7 @@ export function CertificateTemplate({ data }: { data: Certificate }) {
       const monthIdx = parseInt(isoMatch[2], 10) - 1;
       const day = String(parseInt(isoMatch[3], 10)).padStart(2, '0');
       if (monthIdx >= 0 && monthIdx < 12) {
-        return `${day},${months[monthIdx]} ${year}`;
+        return `${day} ${months[monthIdx]} ${year}`;
       }
     }
 
@@ -37,7 +37,7 @@ export function CertificateTemplate({ data }: { data: Certificate }) {
         const day = String(dt.getDate()).padStart(2, '0');
         const monthStr = months[dt.getMonth()];
         const year = dt.getFullYear();
-        return `${day},${monthStr} ${year}`;
+        return `${day} ${monthStr} ${year}`;
       }
     } catch (e) {
       // fallthrough
@@ -61,10 +61,10 @@ export function CertificateTemplate({ data }: { data: Certificate }) {
 
       if (monthIdx >= 0 && monthIdx < 12) {
         const dayStr = String(day).padStart(2, '0');
-        return `${dayStr},${months[monthIdx]} ${year}`;
+        return `${dayStr} ${months[monthIdx]} ${year}`;
       }
     }
-    return s;
+    return s.replace(/,/g, ' ');
   };
 
   return (
@@ -294,7 +294,9 @@ export function CertificateTemplate({ data }: { data: Certificate }) {
                 <strong style={{ color: '#0a2342' }}>{`Mr. ${data.fatherName}`}</strong>,
                 a student of{' '}
                 <strong style={{ color: '#0a2342' }}>
-                  {data.courseName}{data.branch ? ` (${data.branch})` : ''}
+                  {data.courseName}
+                  {data.branch ? ` (${data.branch})` : ''}
+                  {data.semester ? `, ${/sem/i.test(data.semester) ? data.semester : `${data.semester} Semester`}` : ''}
                 </strong>{' '}
                 at{' '}
                 <strong style={{ color: '#0a2342' }}>{data.collegeName}</strong>,
