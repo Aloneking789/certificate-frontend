@@ -214,8 +214,8 @@ export default function ManageCertificatesPage() {
                     <Input name="fatherName" defaultValue={editing.fatherName} />
                   </div>
                   <div>
-                    <Label>Semester</Label>
-                    <Input name="semester" defaultValue={editing.semester} placeholder="e.g. 7th" />
+                    <Label>Semester <span className="text-sm text-muted-foreground">(optional)</span></Label>
+                    <Input name="semester" defaultValue={editing.semester || ''} placeholder="e.g. 7th" />
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     <div>

@@ -22,7 +22,7 @@ export default function CreateCertificatePage() {
     courseName: 'B.Tech',
     collegeName: '',
     branch: '',
-    semester: '1st',
+    semester: '',
     internshipDomain: '',
     startDate: '',
     endDate: '',
@@ -79,7 +79,7 @@ export default function CreateCertificatePage() {
         courseName: form.courseName,
         collegeName: form.collegeName,
         ...(form.branch ? { branch: form.branch } : {}),
-        semester: form.semester,
+        ...(form.semester ? { semester: form.semester } : {}),
         internshipDomain: form.internshipDomain,
         startDate: form.startDate,
         endDate: form.endDate,
@@ -207,8 +207,8 @@ export default function CreateCertificatePage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Semester</Label>
-                    <Input placeholder="e.g. 7th" required value={form.semester} onChange={e => setForm({ ...form, semester: e.target.value })} />
+                    <Label>Semester <span className="text-sm text-muted-foreground">(optional)</span></Label>
+                    <Input placeholder="e.g. 7th" value={form.semester} onChange={e => setForm({ ...form, semester: e.target.value })} />
                   </div>
                 </div>
               </CardContent>
